@@ -1,0 +1,10 @@
+[package]
+name = "rust-boost"
+version = "0.1.0"
+edition = "2024"
+authors = ["hunter-hongg <2843249813@qq.com>"]
+description = "Optimize the Rust standard library to provide a more concise, unified, and extensible API—not a Boost for C++, but a Boost for Rust."
+license = "MIT"
+repository = "https://github.com/hunter-hongg/rust-boost"
+
+[dependencies]
