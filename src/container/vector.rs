@@ -48,7 +48,7 @@ impl<T: Clone> Vector<T> {
     }
 
     pub fn front(&self) -> Option<&T> {
-        self._vec.get(0)
+        self._vec.first()
     }
 
     pub fn back(&self) -> Option<&T> {
@@ -63,7 +63,7 @@ impl<T: Clone> Vector<T> {
         }
     }
 
-    pub fn concat_vec(&self, other: &Vec<T>) -> Self {
+    pub fn concat_vec(&self, other: &[T]) -> Self {
         let mut vec = self._vec.clone();
         vec.extend_from_slice(other);
         Self {
@@ -101,7 +101,7 @@ impl<T: Clone> Vector<T> {
     }
 
     pub fn map<U: Clone>(&self, mapper: impl Fn(&T) -> U) -> Vector<U> {
-        Vector::new(self._vec.iter().map(|x| mapper(x)).collect())
+        Vector::new(self._vec.iter().map(mapper).collect())
     }
 
     pub fn join(&self, separator: &str) -> String where T: Display {

@@ -8,3 +8,4 @@ license = "MIT"
 repository = "https://github.com/hunter-hongg/rust-boost"
 
 [dependencies]
+thiserror = "2.0.18"
