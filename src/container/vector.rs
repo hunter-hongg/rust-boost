@@ -1,5 +1,23 @@
 use std::fmt::Display;
 
+/// 创建Vector的宏，类似于标准库的vec!宏
+/// 用法:
+/// - vector![] 创建空Vector
+/// - vector![a, b, c] 创建包含元素的Vector
+/// - vector![expr; n] 创建包含n个expr副本的Vector
+#[macro_export]
+macro_rules! vector {
+    () => {
+        $crate::container::vector::Vector::new(::std::vec::Vec::new())
+    };
+    ($elem:expr; $n:expr) => {
+        $crate::container::vector::Vector::new(::std::vec![$elem; $n])
+    };
+    ($($x:expr),+ $(,)?) => {
+        $crate::container::vector::Vector::new(::std::vec![$($x),+])
+    };
+}
+
 #[derive(Debug, Clone, Default, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct Vector<T: Clone> {
     _vec: Vec<T>,
@@ -7,9 +25,7 @@ pub struct Vector<T: Clone> {
 
 impl<T: Clone> Vector<T> {
     pub fn new(vec: Vec<T>) -> Self {
-        Self {
-            _vec: vec,
-        }
+        Self { _vec: vec }
     }
 
     pub fn to_vec(self) -> Vec<T> {
@@ -58,17 +74,13 @@ impl<T: Clone> Vector<T> {
     pub fn concat(&self, other: &Self) -> Self {
         let mut vec = self._vec.clone();
         vec.extend_from_slice(&other._vec);
-        Self {
-            _vec: vec,
-        }
+        Self { _vec: vec }
     }
 
     pub fn concat_vec(&self, other: &[T]) -> Self {
         let mut vec = self._vec.clone();
         vec.extend_from_slice(other);
-        Self {
-            _vec: vec,
-        }
+        Self { _vec: vec }
     }
 
     pub fn append(&mut self, other: &Self) {
@@ -80,7 +92,10 @@ impl<T: Clone> Vector<T> {
         self._vec.append(other);
     }
 
-    pub fn sort(&mut self) where T: Ord {
+    pub fn sort(&mut self)
+    where
+        T: Ord,
+    {
         self._vec.sort();
     }
 
@@ -104,10 +119,13 @@ impl<T: Clone> Vector<T> {
         Vector::new(self._vec.iter().map(mapper).collect())
     }
 
-    pub fn join(&self, separator: &str) -> String where T: Display {
+    pub fn join(&self, separator: &str) -> String
+    where
+        T: Display,
+    {
         let mut jstr = String::new();
         let mut first = true;
-        
+
         for item in &self._vec {
             if !first {
                 jstr.push_str(separator);
@@ -118,7 +136,10 @@ impl<T: Clone> Vector<T> {
         jstr
     }
 
-    pub fn find(&self, value: &T) -> Option<usize> where T: PartialEq {
+    pub fn find(&self, value: &T) -> Option<usize>
+    where
+        T: PartialEq,
+    {
         for (i, item) in self._vec.iter().enumerate() {
             if item == value {
                 return Some(i);
@@ -140,4 +161,32 @@ impl<T: Clone> Vector<T> {
         self._vec.is_empty()
     }
 
+    pub fn print(&self)
+    where
+        T: Display,
+    {
+        let len = self.len();
+        for (idx, i) in self.iter().enumerate() {
+            if idx == len - 1 {
+                println!("{}", i);
+            } else {
+                print!("{} ", i);
+            }
+        }
+    }
+
+    /// 返回不可变引用的迭代器
+    pub fn iter(&self) -> std::slice::Iter<'_, T> {
+        self._vec.iter()
+    }
+
+    /// 返回可变引用的迭代器
+    pub fn iter_mut(&mut self) -> std::slice::IterMut<'_, T> {
+        self._vec.iter_mut()
+    }
+
+    /// 消费自身并返回所有权迭代器
+    pub fn into_iter(self) -> std::vec::IntoIter<T> {
+        self._vec.into_iter()
+    }
 }
